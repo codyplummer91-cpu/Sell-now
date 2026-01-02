@@ -7,6 +7,14 @@ import lombok.Data;
  */
 @Data
 public class ItemPriceData {
+    // Price tier thresholds
+    private static final long TIER_1_THRESHOLD = 10_000;       // Gray to White
+    private static final long TIER_2_THRESHOLD = 100_000;      // White to Green
+    private static final long TIER_3_THRESHOLD = 1_000_000;    // Green to Blue
+    private static final long TIER_4_THRESHOLD = 10_000_000;   // Blue to Purple
+    private static final long TIER_5_THRESHOLD = 100_000_000;  // Purple to Orange
+    private static final long TIER_6_THRESHOLD = 1_000_000_000; // Orange to Red
+    
     private final int itemId;
     private final String itemName;
     private long currentPrice;
@@ -53,17 +61,17 @@ public class ItemPriceData {
      * 6: >= 1b (red)
      */
     public int getColorTier() {
-        if (currentPrice < 10_000) {
+        if (currentPrice < TIER_1_THRESHOLD) {
             return 0; // gray
-        } else if (currentPrice < 100_000) {
+        } else if (currentPrice < TIER_2_THRESHOLD) {
             return 1; // white
-        } else if (currentPrice < 1_000_000) {
+        } else if (currentPrice < TIER_3_THRESHOLD) {
             return 2; // green
-        } else if (currentPrice < 10_000_000) {
+        } else if (currentPrice < TIER_4_THRESHOLD) {
             return 3; // blue
-        } else if (currentPrice < 100_000_000) {
+        } else if (currentPrice < TIER_5_THRESHOLD) {
             return 4; // purple
-        } else if (currentPrice < 1_000_000_000) {
+        } else if (currentPrice < TIER_6_THRESHOLD) {
             return 5; // orange
         } else {
             return 6; // red

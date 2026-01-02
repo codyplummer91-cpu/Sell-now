@@ -46,7 +46,7 @@ public class GEPriceService {
      */
     public void startPriceUpdates(ScheduledExecutorService executor, int updateIntervalMinutes) {
         // Ensure minimum interval of 5 minutes to respect API rate limits
-        long interval = Math.max(updateIntervalMinutes, DEFAULT_UPDATE_INTERVAL_MINUTES);
+        long intervalMinutes = Math.max(updateIntervalMinutes, DEFAULT_UPDATE_INTERVAL_MINUTES);
         
         // Initial update
         updateAllPrices();
@@ -54,8 +54,8 @@ public class GEPriceService {
         // Schedule periodic updates and store the task
         priceUpdateTask = executor.scheduleAtFixedRate(
             this::updateAllPrices,
-            interval,
-            interval,
+            intervalMinutes,
+            intervalMinutes,
             TimeUnit.MINUTES
         );
     }
@@ -140,8 +140,8 @@ public class GEPriceService {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseBody = response.body().string();
                     
-                    // The response is a JSON array directly
-                    if (responseBody.trim().startsWith("[")) {
+                    try {
+                        // Parse as JSON array and process each item
                         JsonParser.parseString(responseBody).getAsJsonArray().forEach(element -> {
                             JsonObject item = element.getAsJsonObject();
                             int id = item.get("id").getAsInt();
@@ -150,6 +150,8 @@ public class GEPriceService {
                         });
                         
                         log.debug("Loaded {} item names", itemNameCache.size());
+                    } catch (Exception e) {
+                        log.error("Error parsing item mapping JSON", e);
                     }
                 }
             }

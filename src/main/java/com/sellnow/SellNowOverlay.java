@@ -3,7 +3,6 @@ package com.sellnow;
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetItem;
-import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -27,17 +26,15 @@ public class SellNowOverlay extends Overlay {
     private final Client client;
     private final SellNowConfig config;
     private final GEPriceService priceService;
-    private final ItemManager itemManager;
     private final TooltipManager tooltipManager;
     private final NumberFormat numberFormat;
     
     @Inject
     public SellNowOverlay(Client client, SellNowConfig config, GEPriceService priceService,
-                          ItemManager itemManager, TooltipManager tooltipManager) {
+                          TooltipManager tooltipManager) {
         this.client = client;
         this.config = config;
         this.priceService = priceService;
-        this.itemManager = itemManager;
         this.tooltipManager = tooltipManager;
         this.numberFormat = NumberFormat.getInstance(Locale.US);
         
@@ -125,8 +122,12 @@ public class SellNowOverlay extends Overlay {
             // Add tooltip if enabled and mouse is hovering
             if (config.showTooltip()) {
                 net.runelite.api.Point mousePos = client.getMouseCanvasPosition();
-                if (mousePos != null && bounds.contains(mousePos.getX(), mousePos.getY())) {
-                    showPriceTooltip(priceData);
+                if (mousePos != null) {
+                    int mouseX = mousePos.getX();
+                    int mouseY = mousePos.getY();
+                    if (bounds.contains(mouseX, mouseY)) {
+                        showPriceTooltip(priceData);
+                    }
                 }
             }
         }
