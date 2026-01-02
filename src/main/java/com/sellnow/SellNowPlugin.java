@@ -12,6 +12,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -41,7 +42,8 @@ public class SellNowPlugin extends Plugin {
     private GEPriceService priceService;
     
     @Inject
-    private ScheduledExecutorService executor;
+    @Named("runelite")
+    private ScheduledExecutorService executorService;
     
     @Override
     protected void startUp() throws Exception {
@@ -51,10 +53,10 @@ public class SellNowPlugin extends Plugin {
         overlayManager.add(overlay);
         
         // Load item name mapping
-        executor.submit(() -> priceService.loadItemNameMapping());
+        executorService.submit(() -> priceService.loadItemNameMapping());
         
         // Start price updates with configured interval
-        priceService.startPriceUpdates(executor, config.updateIntervalMinutes());
+        priceService.startPriceUpdates(executorService, config.updateIntervalMinutes());
         
         log.info("Price tracking started with {} minute update interval.", config.updateIntervalMinutes());
     }
