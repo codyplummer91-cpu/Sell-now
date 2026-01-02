@@ -53,10 +53,10 @@ public class SellNowPlugin extends Plugin {
         // Load item name mapping
         executor.submit(() -> priceService.loadItemNameMapping());
         
-        // Start price updates
-        priceService.startPriceUpdates(executor);
+        // Start price updates with configured interval
+        priceService.startPriceUpdates(executor, config.updateIntervalMinutes());
         
-        log.info("Price tracking started. Tracking {} items.", priceService.getTrackedItemCount());
+        log.info("Price tracking started with {} minute update interval.", config.updateIntervalMinutes());
     }
     
     @Override

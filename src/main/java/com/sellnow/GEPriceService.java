@@ -24,7 +24,7 @@ public class GEPriceService {
     
     private static final String OSRS_WIKI_API = "https://prices.runescape.wiki/api/v1/osrs/latest";
     private static final String OSRS_WIKI_MAPPING = "https://prices.runescape.wiki/api/v1/osrs/mapping";
-    private static final long UPDATE_INTERVAL_MINUTES = 5;
+    private static final long DEFAULT_UPDATE_INTERVAL_MINUTES = 5;
     
     private final OkHttpClient httpClient;
     private final Map<Integer, ItemPriceData> priceCache;
@@ -39,16 +39,21 @@ public class GEPriceService {
     
     /**
      * Start periodic price updates
+     * @param executor The executor service for scheduling updates
+     * @param updateIntervalMinutes The interval between updates in minutes (minimum 5)
      */
-    public void startPriceUpdates(ScheduledExecutorService executor) {
+    public void startPriceUpdates(ScheduledExecutorService executor, int updateIntervalMinutes) {
+        // Ensure minimum interval of 5 minutes to respect API rate limits
+        long interval = Math.max(updateIntervalMinutes, DEFAULT_UPDATE_INTERVAL_MINUTES);
+        
         // Initial update
         updateAllPrices();
         
         // Schedule periodic updates
         executor.scheduleAtFixedRate(
             this::updateAllPrices,
-            UPDATE_INTERVAL_MINUTES,
-            UPDATE_INTERVAL_MINUTES,
+            interval,
+            interval,
             TimeUnit.MINUTES
         );
     }

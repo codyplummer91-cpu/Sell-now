@@ -23,9 +23,11 @@ public class ItemPriceData {
     
     /**
      * Check if the item is at its all-time high
+     * Returns true only if price has been set and equals the all-time high
      */
     public boolean isAtAllTimeHigh() {
-        return currentPrice > 0 && currentPrice >= allTimeHigh;
+        // Ensure we have valid price data and that the price is actually at ATH
+        return currentPrice > 0 && allTimeHigh > 0 && currentPrice >= allTimeHigh;
     }
     
     /**

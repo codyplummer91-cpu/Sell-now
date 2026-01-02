@@ -160,13 +160,13 @@ public class SellNowOverlay extends Overlay {
     private void showPriceTooltip(ItemPriceData priceData) {
         StringBuilder tooltipText = new StringBuilder();
         tooltipText.append(priceData.getItemName())
-            .append("</br>")
+            .append("<br/>")
             .append("Current: ")
             .append(numberFormat.format(priceData.getCurrentPrice()))
-            .append(" gp</br>")
+            .append(" gp<br/>")
             .append("All-Time High: ")
             .append(numberFormat.format(priceData.getAllTimeHigh()))
-            .append(" gp</br>")
+            .append(" gp<br/>")
             .append("<col=00ff00>AT ALL-TIME HIGH!</col>");
         
         tooltipManager.add(new Tooltip(tooltipText.toString()));
