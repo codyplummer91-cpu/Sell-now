@@ -122,10 +122,10 @@ public class GEPriceService {
             try (Response response = httpClient.newCall(request).execute()) {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseBody = response.body().string();
-                    JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
                     
-                    if (json.isJsonArray()) {
-                        json.getAsJsonArray().forEach(element -> {
+                    // The response is a JSON array directly
+                    if (responseBody.trim().startsWith("[")) {
+                        JsonParser.parseString(responseBody).getAsJsonArray().forEach(element -> {
                             JsonObject item = element.getAsJsonObject();
                             int id = item.get("id").getAsInt();
                             String name = item.get("name").getAsString();

@@ -20,13 +20,23 @@ A RuneLite plugin that highlights items when they are at their all-time high on 
 
 ## Installation
 
+### For Users
+1. Download the latest release JAR file
+2. Place it in your RuneLite's `plugins` folder
+3. Restart RuneLite
+4. Enable the plugin in the plugin hub
+
+### For Developers
+This plugin requires the RuneLite client libraries to build. To build from source:
+
 1. Clone this repository
-2. Build the plugin using Gradle:
+2. Ensure you have the RuneLite development environment set up
+3. Build the plugin:
    ```bash
-   ./gradlew build
+   gradle build
    ```
-3. Copy the built JAR to your RuneLite plugins folder
-4. Enable the plugin in RuneLite's plugin hub
+   
+**Note:** The plugin requires access to RuneLite repositories. If building standalone, you may need to have RuneLite's client JAR in your local Maven repository or build within a RuneLite fork.
 
 ## Configuration
 
