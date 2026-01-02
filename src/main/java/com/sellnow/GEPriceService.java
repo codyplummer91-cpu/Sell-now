@@ -95,20 +95,28 @@ public class GEPriceService {
                                 int itemId = Integer.parseInt(entry.getKey());
                                 JsonObject priceData = entry.getValue().getAsJsonObject();
                                 
-                                // Use high price if available, otherwise use low price
-                                long price = 0;
+                                // Get both high and low prices
+                                long highPrice = 0;
+                                long lowPrice = 0;
+                                
                                 if (priceData.has("high")) {
-                                    price = priceData.get("high").getAsLong();
-                                } else if (priceData.has("low")) {
-                                    price = priceData.get("low").getAsLong();
+                                    highPrice = priceData.get("high").getAsLong();
+                                }
+                                if (priceData.has("low")) {
+                                    lowPrice = priceData.get("low").getAsLong();
                                 }
                                 
-                                if (price > 0) {
+                                // Only store if we have at least one valid price
+                                if (highPrice > 0 || lowPrice > 0) {
+                                    // If one is missing, use the other
+                                    if (highPrice == 0) highPrice = lowPrice;
+                                    if (lowPrice == 0) lowPrice = highPrice;
+                                    
                                     ItemPriceData itemData = priceCache.computeIfAbsent(
                                         itemId,
                                         id -> new ItemPriceData(id, itemNameCache.getOrDefault(id, "Unknown Item"))
                                     );
-                                    itemData.updatePrice(price);
+                                    itemData.updatePrices(lowPrice, highPrice);
                                 }
                             } catch (Exception e) {
                                 log.debug("Error parsing price for item: " + entry.getKey(), e);
@@ -168,11 +176,11 @@ public class GEPriceService {
     }
     
     /**
-     * Check if an item is at its all-time high
+     * Check if an item is above average price
      */
-    public boolean isItemAtAllTimeHigh(int itemId) {
+    public boolean isItemAboveAverage(int itemId) {
         ItemPriceData data = priceCache.get(itemId);
-        return data != null && data.isAtAllTimeHigh();
+        return data != null && data.isAboveAverage();
     }
     
     /**

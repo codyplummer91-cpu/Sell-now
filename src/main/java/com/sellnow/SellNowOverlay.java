@@ -80,7 +80,12 @@ public class SellNowOverlay extends Overlay {
      * Render highlights for bank items
      */
     private void renderBankHighlights(Graphics2D graphics) {
-        Widget bankWidget = client.getWidget(12, 12); // Bank item container
+        // Try multiple bank widget IDs
+        Widget bankWidget = client.getWidget(15, 3); // Bank items container (newer)
+        if (bankWidget == null || bankWidget.isHidden()) {
+            bankWidget = client.getWidget(12, 13); // Bank items container (alternative)
+        }
+        
         if (bankWidget != null && !bankWidget.isHidden()) {
             Widget[] children = bankWidget.getChildren();
             if (children != null) {
@@ -117,14 +122,14 @@ public class SellNowOverlay extends Overlay {
     private void renderWidgetHighlight(Graphics2D graphics, Widget widget) {
         int itemId = widget.getItemId();
         
-        // Check if item is at all-time high
+        // Check if item price is above average
         ItemPriceData priceData = priceService.getItemPriceData(itemId);
-        if (priceData == null || !priceData.isAtAllTimeHigh()) {
+        if (priceData == null || !priceData.isAboveAverage()) {
             return;
         }
         
-        // Get the color based on price tier
-        Color highlightColor = getColorForTier(priceData.getColorTier());
+        // Use green highlight color
+        Color highlightColor = config.highlightColor();
         
         // Draw the highlight
         Rectangle bounds = widget.getBounds();
@@ -148,43 +153,19 @@ public class SellNowOverlay extends Overlay {
     }
     
     /**
-     * Get the color for a specific price tier
-     */
-    private Color getColorForTier(int tier) {
-        switch (tier) {
-            case 0:
-                return config.colorGray();
-            case 1:
-                return config.colorWhite();
-            case 2:
-                return config.colorGreen();
-            case 3:
-                return config.colorBlue();
-            case 4:
-                return config.colorPurple();
-            case 5:
-                return config.colorOrange();
-            case 6:
-                return config.colorRed();
-            default:
-                return Color.WHITE;
-        }
-    }
-    
-    /**
      * Show a tooltip with price information
      */
     private void showPriceTooltip(ItemPriceData priceData) {
         StringBuilder tooltipText = new StringBuilder();
         tooltipText.append(priceData.getItemName())
             .append("<br/>")
-            .append("Current: ")
-            .append(numberFormat.format(priceData.getCurrentPrice()))
-            .append(" gp<br/>")
-            .append("All-Time High: ")
-            .append(numberFormat.format(priceData.getAllTimeHigh()))
-            .append(" gp<br/>")
-            .append("<col=00ff00>AT ALL-TIME HIGH!</col>");
+            .append("Low: ")
+            .append(numberFormat.format(priceData.getLowPrice()))
+            .append(" | Avg: ")
+            .append(numberFormat.format(priceData.getAveragePrice()))
+            .append(" | High: ")
+            .append(numberFormat.format(priceData.getHighPrice()))
+            .append(" gp");
         
         tooltipManager.add(new Tooltip(tooltipText.toString()));
     }

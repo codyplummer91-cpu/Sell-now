@@ -40,73 +40,13 @@ public interface SellNowConfig extends Config {
     }
     
     @ConfigItem(
-        keyName = "colorGray",
-        name = "Color: < 10k",
-        description = "Color for items worth less than 10k",
+        keyName = "highlightColor",
+        name = "Highlight Color",
+        description = "Color for items above average price",
         position = 10
     )
-    default Color colorGray() {
-        return new Color(128, 128, 128);
-    }
-    
-    @ConfigItem(
-        keyName = "colorWhite",
-        name = "Color: 10k-100k",
-        description = "Color for items worth 10k-100k",
-        position = 11
-    )
-    default Color colorWhite() {
-        return Color.WHITE;
-    }
-    
-    @ConfigItem(
-        keyName = "colorGreen",
-        name = "Color: 100k-1m",
-        description = "Color for items worth 100k-1m",
-        position = 12
-    )
-    default Color colorGreen() {
+    default Color highlightColor() {
         return Color.GREEN;
-    }
-    
-    @ConfigItem(
-        keyName = "colorBlue",
-        name = "Color: 1m-10m",
-        description = "Color for items worth 1m-10m",
-        position = 13
-    )
-    default Color colorBlue() {
-        return Color.CYAN;
-    }
-    
-    @ConfigItem(
-        keyName = "colorPurple",
-        name = "Color: 10m-100m",
-        description = "Color for items worth 10m-100m",
-        position = 14
-    )
-    default Color colorPurple() {
-        return new Color(128, 0, 128);
-    }
-    
-    @ConfigItem(
-        keyName = "colorOrange",
-        name = "Color: 100m-1b",
-        description = "Color for items worth 100m-1b",
-        position = 15
-    )
-    default Color colorOrange() {
-        return Color.ORANGE;
-    }
-    
-    @ConfigItem(
-        keyName = "colorRed",
-        name = "Color: >= 1b",
-        description = "Color for items worth 1 billion or more",
-        position = 16
-    )
-    default Color colorRed() {
-        return Color.RED;
     }
     
     @ConfigItem(
