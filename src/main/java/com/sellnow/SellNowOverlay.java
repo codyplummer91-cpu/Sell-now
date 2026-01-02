@@ -80,11 +80,8 @@ public class SellNowOverlay extends Overlay {
      * Render highlights for bank items
      */
     private void renderBankHighlights(Graphics2D graphics) {
-        // Try multiple bank widget IDs
-        Widget bankWidget = client.getWidget(15, 3); // Bank items container (newer)
-        if (bankWidget == null || bankWidget.isHidden()) {
-            bankWidget = client.getWidget(12, 13); // Bank items container (alternative)
-        }
+        // Bank inventory widget (the main bank interface with all items)
+        Widget bankWidget = client.getWidget(12, 13); // Bank item container
         
         if (bankWidget != null && !bankWidget.isHidden()) {
             Widget[] children = bankWidget.getChildren();
