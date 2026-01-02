@@ -2,7 +2,6 @@ package com.sellnow;
 
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -66,8 +65,13 @@ public class SellNowOverlay extends Overlay {
     private void renderInventoryHighlights(Graphics2D graphics) {
         Widget inventoryWidget = client.getWidget(149, 0); // Inventory widget
         if (inventoryWidget != null && !inventoryWidget.isHidden()) {
-            for (WidgetItem item : inventoryWidget.getWidgetItems()) {
-                renderItemHighlight(graphics, item);
+            Widget[] children = inventoryWidget.getChildren();
+            if (children != null) {
+                for (Widget child : children) {
+                    if (child != null && child.getItemId() > 0) {
+                        renderWidgetHighlight(graphics, child);
+                    }
+                }
             }
         }
     }
@@ -78,8 +82,13 @@ public class SellNowOverlay extends Overlay {
     private void renderBankHighlights(Graphics2D graphics) {
         Widget bankWidget = client.getWidget(12, 12); // Bank item container
         if (bankWidget != null && !bankWidget.isHidden()) {
-            for (WidgetItem item : bankWidget.getWidgetItems()) {
-                renderItemHighlight(graphics, item);
+            Widget[] children = bankWidget.getChildren();
+            if (children != null) {
+                for (Widget child : children) {
+                    if (child != null && child.getItemId() > 0) {
+                        renderWidgetHighlight(graphics, child);
+                    }
+                }
             }
         }
     }
@@ -91,17 +100,22 @@ public class SellNowOverlay extends Overlay {
         // GE inventory widget
         Widget geInventoryWidget = client.getWidget(465, 7);
         if (geInventoryWidget != null && !geInventoryWidget.isHidden()) {
-            for (WidgetItem item : geInventoryWidget.getWidgetItems()) {
-                renderItemHighlight(graphics, item);
+            Widget[] children = geInventoryWidget.getChildren();
+            if (children != null) {
+                for (Widget child : children) {
+                    if (child != null && child.getItemId() > 0) {
+                        renderWidgetHighlight(graphics, child);
+                    }
+                }
             }
         }
     }
     
     /**
-     * Render a highlight around a specific item
+     * Render a highlight around a specific widget item
      */
-    private void renderItemHighlight(Graphics2D graphics, WidgetItem item) {
-        int itemId = item.getId();
+    private void renderWidgetHighlight(Graphics2D graphics, Widget widget) {
+        int itemId = widget.getItemId();
         
         // Check if item is at all-time high
         ItemPriceData priceData = priceService.getItemPriceData(itemId);
@@ -113,7 +127,7 @@ public class SellNowOverlay extends Overlay {
         Color highlightColor = getColorForTier(priceData.getColorTier());
         
         // Draw the highlight
-        Rectangle bounds = item.getCanvasBounds();
+        Rectangle bounds = widget.getBounds();
         if (bounds != null) {
             graphics.setColor(highlightColor);
             graphics.setStroke(new BasicStroke(config.highlightThickness()));
