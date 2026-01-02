@@ -84,15 +84,34 @@ public class SellNowOverlay extends Overlay {
         Widget bankWidget = client.getWidget(12, 13); // Bank item container
         
         if (bankWidget != null && !bankWidget.isHidden()) {
+            // Get the visible bank scroll area
+            Widget bankContainer = client.getWidget(12, 9); // Bank scroll container
+            Rectangle visibleArea = (bankContainer != null) ? bankContainer.getBounds() : null;
+            
             Widget[] children = bankWidget.getChildren();
             if (children != null) {
                 for (Widget child : children) {
                     if (child != null && child.getItemId() > 0) {
-                        renderWidgetHighlight(graphics, child);
+                        // Only render if within visible scroll area
+                        if (visibleArea == null || isWidgetInVisibleArea(child, visibleArea)) {
+                            renderWidgetHighlight(graphics, child);
+                        }
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Check if a widget is within the visible scroll area
+     */
+    private boolean isWidgetInVisibleArea(Widget widget, Rectangle visibleArea) {
+        Rectangle bounds = widget.getBounds();
+        if (bounds == null) {
+            return false;
+        }
+        // Check if the widget intersects with the visible area
+        return visibleArea.intersects(bounds);
     }
     
     /**
