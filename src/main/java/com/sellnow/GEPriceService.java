@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,6 +30,7 @@ public class GEPriceService {
     private final OkHttpClient httpClient;
     private final Map<Integer, ItemPriceData> priceCache;
     private final Map<Integer, String> itemNameCache;
+    private ScheduledFuture<?> priceUpdateTask;
     
     @Inject
     public GEPriceService(OkHttpClient httpClient) {
@@ -49,13 +51,23 @@ public class GEPriceService {
         // Initial update
         updateAllPrices();
         
-        // Schedule periodic updates
-        executor.scheduleAtFixedRate(
+        // Schedule periodic updates and store the task
+        priceUpdateTask = executor.scheduleAtFixedRate(
             this::updateAllPrices,
             interval,
             interval,
             TimeUnit.MINUTES
         );
+    }
+    
+    /**
+     * Stop periodic price updates
+     */
+    public void stopPriceUpdates() {
+        if (priceUpdateTask != null && !priceUpdateTask.isCancelled()) {
+            priceUpdateTask.cancel(false);
+            log.debug("Price update task cancelled");
+        }
     }
     
     /**

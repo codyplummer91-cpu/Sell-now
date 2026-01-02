@@ -63,6 +63,9 @@ public class SellNowPlugin extends Plugin {
     protected void shutDown() throws Exception {
         log.info("Sell Now plugin stopped!");
         
+        // Stop price updates
+        priceService.stopPriceUpdates();
+        
         // Remove overlay
         overlayManager.remove(overlay);
         

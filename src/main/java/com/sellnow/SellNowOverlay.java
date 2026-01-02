@@ -123,9 +123,11 @@ public class SellNowOverlay extends Overlay {
             graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
             
             // Add tooltip if enabled and mouse is hovering
-            if (config.showTooltip() && bounds.contains(client.getMouseCanvasPosition().getX(),
-                    client.getMouseCanvasPosition().getY())) {
-                showPriceTooltip(priceData);
+            if (config.showTooltip()) {
+                net.runelite.api.Point mousePos = client.getMouseCanvasPosition();
+                if (mousePos != null && bounds.contains(mousePos.getX(), mousePos.getY())) {
+                    showPriceTooltip(priceData);
+                }
             }
         }
     }
