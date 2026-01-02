@@ -12,7 +12,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -41,13 +41,14 @@ public class SellNowPlugin extends Plugin {
     @Inject
     private GEPriceService priceService;
     
-    @Inject
-    @Named("runelite")
     private ScheduledExecutorService executorService;
     
     @Override
     protected void startUp() throws Exception {
         log.info("Sell Now plugin started!");
+        
+        // Create executor service
+        executorService = Executors.newSingleThreadScheduledExecutor();
         
         // Add overlay
         overlayManager.add(overlay);
@@ -67,6 +68,11 @@ public class SellNowPlugin extends Plugin {
         
         // Stop price updates
         priceService.stopPriceUpdates();
+        
+        // Shutdown executor service
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
         
         // Remove overlay
         overlayManager.remove(overlay);

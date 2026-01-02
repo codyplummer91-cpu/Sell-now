@@ -48,8 +48,8 @@ public class GEPriceService {
         // Ensure minimum interval of 5 minutes to respect API rate limits
         long intervalMinutes = Math.max(updateIntervalMinutes, DEFAULT_UPDATE_INTERVAL_MINUTES);
         
-        // Initial update
-        updateAllPrices();
+        // Initial update (must be on background thread)
+        executor.submit(this::updateAllPrices);
         
         // Schedule periodic updates and store the task
         priceUpdateTask = executor.scheduleAtFixedRate(
